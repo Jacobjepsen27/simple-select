@@ -1,7 +1,8 @@
 import React from "react";
 import "./App.css";
 import styled from "@emotion/styled";
-import { SimpleSelect } from "./components/SimpleSelect/SimpleSelect";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { SimpleSelectControl } from "./components/SimpleSelectControl/SimpleSelectControl";
 
 const Center = styled.div`
   display: flex;
@@ -18,20 +19,39 @@ const ContentWidth = styled.div`
   width: 200px;
 `;
 
+export interface Formvalues {
+  fruit: string;
+  car: string;
+}
+
 function App() {
+  const { handleSubmit, control } = useForm<Formvalues>();
+
+  const onSubmit: SubmitHandler<Formvalues> = (data) => {
+    window.alert(JSON.stringify(data));
+  };
   return (
     <Center>
-      <h1>test</h1>
+      <h1>Simple Selects</h1>
       <ContentWidth>
-        <SimpleSelect
+        <SimpleSelectControl
+          name="fruit"
+          control={control}
+          rules={{ required: "Fruit required" }}
           options={["Apple", "Banana", "Citrus", "Pear"]}
-          placeholder={"Select fruit"}
+          placeholder="Select fruit"
         />
         <Spacer />
-        <SimpleSelect
+        <SimpleSelectControl
+          name="car"
+          control={control}
+          rules={{ required: "Car required" }}
           options={["BMW", "Mercedes", "Audi"]}
-          placeholder={"Select car"}
+          placeholder="Select car"
         />
+
+        <Spacer />
+        <button onClick={() => handleSubmit(onSubmit)()}>submit form</button>
       </ContentWidth>
     </Center>
   );

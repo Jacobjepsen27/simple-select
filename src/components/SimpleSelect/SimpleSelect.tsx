@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -67,16 +67,21 @@ const ListItem = styled.li`
 `;
 
 interface SimpleSelectProps {
+  onChange: (value: string) => void;
+  value: string;
   placeholder?: string;
   options: string[];
 }
 export const SimpleSelect = (props: SimpleSelectProps) => {
-  const { options, placeholder } = props;
+  const { value: receivedValue, onChange, options, placeholder } = props;
 
   const [value, setValue] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-
   const headerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setValue(receivedValue);
+  }, [receivedValue, setValue]);
 
   const handleSelectClick = () => {
     setIsOpen(!isOpen);
@@ -85,8 +90,13 @@ export const SimpleSelect = (props: SimpleSelectProps) => {
   const handleOptionClick = (option: string) => {
     setValue(option);
     setIsOpen(false);
+    onChange(option);
   };
 
+  /**
+   * Align <ListContainer> below <Header/>
+   * @param element
+   */
   const topOffset = (element: HTMLDivElement) => {
     return (
       element.getBoundingClientRect().top +
@@ -94,10 +104,18 @@ export const SimpleSelect = (props: SimpleSelectProps) => {
     );
   };
 
+  /**
+   * Align <ListContainer> horizontally with <Header/>
+   * @param element
+   */
   const leftOffset = (element: HTMLDivElement) => {
     return element.getBoundingClientRect().left;
   };
 
+  /**
+   * <ListContainer/> same width as <Header/>
+   * @param element
+   */
   const parentWidth = (element: HTMLDivElement) => {
     return element.getBoundingClientRect().width;
   };
